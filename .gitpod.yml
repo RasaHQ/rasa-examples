@@ -1,1 +1,2 @@
-image: rasa/rasa:2.8.7
+image:
+  file: .gitpod.Dockerfile
