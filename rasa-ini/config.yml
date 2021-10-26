@@ -19,9 +19,7 @@ pipeline:
     analyzer: char
     min_ngram: 2
     max_ngram: 3
-  - name: DIETClassifier
-    epochs: 100
-    constrain_similarities: true
+  - name: nlu_clf.LogisticRegressionClassifier
 
 policies:
   - name: MemoizationPolicy
