@@ -7,7 +7,7 @@ from rasa.engine.storage.resource import Resource
 from rasa.engine.storage.storage import ModelStorage
 from rasa.nlu.tokenizers.tokenizer import Token, Tokenizer
 from rasa.shared.nlu.training_data.message import Message
- 
+
  
 @DefaultV1Recipe.register(
    DefaultV1Recipe.ComponentType.MESSAGE_TOKENIZER, is_trainable=False
@@ -31,7 +31,7 @@ class AnotherWhitespaceTokenizer(Tokenizer):
             # This is a, somewhat silly, config that we pass
             "only_alphanum": True,
         }
- 
+
     def __init__(self, config: Dict[Text, Any]) -> None:
         """Initialize the tokenizer."""
         super().__init__(config)
@@ -39,7 +39,7 @@ class AnotherWhitespaceTokenizer(Tokenizer):
   
     def parse_string(self, s):
         if self.only_alphanum:
-            return "".join([c for c in s if str.isalnum(c)])
+            return "".join([c for c in s if ((c == " ") or str.isalnum(c))])
         return s
  
     @classmethod
@@ -54,7 +54,6 @@ class AnotherWhitespaceTokenizer(Tokenizer):
  
     def tokenize(self, message: Message, attribute: Text) -> List[Token]:
         text = self.parse_string(message.get(attribute))
-  
         words = [w for w in text.split(" ") if w]
  
         # if we removed everything like smiles `:)`, use the whole text as 1 token

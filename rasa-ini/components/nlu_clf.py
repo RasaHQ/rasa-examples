@@ -56,6 +56,7 @@ class LogisticRegressionClassifier(IntentClassifier, GraphComponent):
             model_storage: ModelStorage,
             resource: Resource,
         ) -> None:
+        self.name = name
         self.clf = LogisticRegression(solver=config["solver"], max_iter=config["max_iter"], class_weight=config["class_weight"])
 
         # We need to use these later when saving the trained component.
@@ -115,7 +116,7 @@ class LogisticRegressionClassifier(IntentClassifier, GraphComponent):
  
     def persist(self) -> None:
         with self._model_storage.write_to(self._resource) as model_dir:
-            dump(self.clf, model_dir / "tfidfvectorizer.joblib")
+            dump(self.clf, model_dir / f"{self.name}.joblib")
     
     @classmethod
     def load(cls,
@@ -125,7 +126,7 @@ class LogisticRegressionClassifier(IntentClassifier, GraphComponent):
             execution_context: ExecutionContext,
     ) -> GraphComponent:
         with model_storage.read_from(resource) as model_dir:
-            tfidfvectorizer = load(model_dir / "tfidfvectorizer.joblib")
+            tfidfvectorizer = load(model_dir / f"{self.name}.joblib")
             component = cls(config, execution_context.node_name, model_storage, resource)
             component.clf = tfidfvectorizer
             return component
