@@ -1,10 +1,11 @@
 import pytest 
 
 from rasa.shared.nlu.training_data.message import Message
-from .nlu_tok import AnotherWhitespaceTokenizer
 from rasa.engine.storage.resource import Resource
 from rasa.engine.storage.local_model_storage import LocalModelStorage
 from rasa.engine.graph import ExecutionContext
+
+from .nlu_tok import AnotherWhitespaceTokenizer
 
 node_storage = LocalModelStorage("tmp/storage")
 node_resource = Resource("tokenizer")

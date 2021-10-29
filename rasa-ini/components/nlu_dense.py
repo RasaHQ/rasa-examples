@@ -14,15 +14,11 @@ from rasa.shared.nlu.training_data.training_data import TrainingData
 from rasa.shared.nlu.training_data.features import Features
 from rasa.shared.nlu.training_data.message import Message
 from rasa.nlu.constants import (
-   SPACY_DOCS,
    DENSE_FEATURIZABLE_ATTRIBUTES,
    FEATURIZER_CLASS_ALIAS,
 )
 from rasa.shared.nlu.constants import TEXT, TEXT_TOKENS, FEATURE_TYPE_SENTENCE, FEATURE_TYPE_SEQUENCE
-from rasa.utils.tensorflow.constants import POOLING, MEAN_POOLING
- 
-if typing.TYPE_CHECKING:
-   from spacy.tokens import Doc
+
  
 logger = logging.getLogger(__name__)
  
@@ -59,12 +55,6 @@ class BytePairFeaturizer(DenseFeaturizer, GraphComponent):
    def __init__(self, config: Dict[Text, Any], name: Text,) -> None:
        super().__init__(name, config)
        # The configuration dictionary is saved in `self._config` for reference.
-       if not self._config['lang']:
-           raise ValueError("BytePairFeaturizer needs language setting via `lang`.")
-       if not self._config['dim']:
-           raise ValueError("BytePairFeaturizer needs dimensionality setting via `dim`.")
-       if not self._config['vs']:
-           raise ValueError("BytePairFeaturizer needs a vector size setting via `vs`.")
        self.model = BPEmb(
            lang=self._config["lang"],
            dim=self._config["dim"],
@@ -140,4 +130,9 @@ class BytePairFeaturizer(DenseFeaturizer, GraphComponent):
    @classmethod
    def validate_config(cls, config: Dict[Text, Any]) -> None:
        """Validates that the component is configured properly."""
-       pass
+       if not config['lang']:
+           raise ValueError("BytePairFeaturizer needs language setting via `lang`.")
+       if not config['dim']:
+           raise ValueError("BytePairFeaturizer needs dimensionality setting via `dim`.")
+       if not config['vs']:
+           raise ValueError("BytePairFeaturizer needs a vector size setting via `vs`.")

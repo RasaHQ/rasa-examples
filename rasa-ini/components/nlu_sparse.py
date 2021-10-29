@@ -1,3 +1,5 @@
+from rich.console import Console 
+
 import logging
 from typing import Any, Text, Dict, List, Type
 
@@ -20,7 +22,9 @@ from rasa.shared.nlu.constants import TEXT, TEXT_TOKENS, FEATURE_TYPE_SENTENCE, 
   
 logger = logging.getLogger(__name__)
  
- 
+
+console = Console()
+
 @DefaultV1Recipe.register(
    DefaultV1Recipe.ComponentType.MESSAGE_FEATURIZER, is_trainable=True
 )
@@ -28,15 +32,18 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
  
     @classmethod
     def required_components(cls) -> List[Type]:
+        console.log("ping from required_components")
         return [Tokenizer]
  
     @staticmethod
     def required_packages() -> List[Text]:
         """Any extra python dependencies required for this component to run."""
+        console.log("ping from required_packages")
         return ["sklearn"]
  
     @staticmethod
     def get_default_config() -> Dict[Text, Any]:
+        console.log("ping from get_default_config")
         return {
            **SparseFeaturizer.get_default_config(),
            "analyzer": "word",
@@ -54,6 +61,7 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
         # TODO: When is `resource` passed and when isn't it? 
         # TODO: When is `model_storage` passed and when isn't it? 
         super().__init__(name, config)
+        console.log("ping from init")
         self.tfm = TfidfVectorizer(
             analyzer=config["analyzer"], 
             ngram_range=(config["min_ngram"], config["max_ngram"])
@@ -67,6 +75,7 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
         self, training_data: TrainingData
     ) -> Resource:
         texts = [e.get(TEXT) for e in training_data.training_examples if e.get(TEXT)]
+        console.log("ping from train")
 
         self.tfm.fit(texts)
         self.persist()
@@ -83,15 +92,18 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
        resource: Resource,
        execution_context: ExecutionContext,
     ) -> GraphComponent:
-       return cls(config, execution_context.node_name, model_storage, resource)
+        console.log("ping from create")
+        return cls(config, execution_context.node_name, model_storage, resource)
  
     def process(self, messages: List[Message]) -> List[Message]:
-       for message in messages:
-           for attribute in DENSE_FEATURIZABLE_ATTRIBUTES:
-               self._set_features(message, attribute)
-       return messages
+        console.log("ping from process")
+        for message in messages:
+            for attribute in DENSE_FEATURIZABLE_ATTRIBUTES:
+                self._set_features(message, attribute)
+        return messages
 
     def persist(self) -> None:
+        console.log("ping from persist")
         with self._model_storage.write_to(self._resource) as model_dir:
             dump(self.tfm, model_dir / "tfidfvectorizer.joblib")
     
@@ -102,6 +114,7 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
             resource: Resource,
             execution_context: ExecutionContext,
     ) -> GraphComponent:
+        console.log("ping from load")
         with model_storage.read_from(resource) as model_dir:
             tfidfvectorizer = load(model_dir / "tfidfvectorizer.joblib")
             component = cls(config, execution_context.node_name, model_storage, resource)
@@ -109,6 +122,7 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
             return component
 
     def process_training_data(self, training_data: TrainingData) -> TrainingData:
+        console.log("ping from process_training_data")
         self.process(training_data.training_examples)
         return training_data
    
@@ -139,4 +153,5 @@ class TfIdfFeaturizer(SparseFeaturizer, GraphComponent):
     @classmethod
     def validate_config(cls, config: Dict[Text, Any]) -> None:
         """Validates that the component is configured properly."""
+        console.log("ping from validate_config")
         pass

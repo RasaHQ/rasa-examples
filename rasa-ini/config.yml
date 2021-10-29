@@ -3,7 +3,7 @@ recipe: default.v1
 language: en
 
 pipeline:
-  - name: nlu_tok.AnotherWhitespaceTokenizer
+  - name: components.nlu_tok.AnotherWhitespaceTokenizer
   - name: RegexFeaturizer
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer
@@ -11,15 +11,16 @@ pipeline:
     analyzer: char_wb
     min_ngram: 1
     max_ngram: 4
-  - name: nlu_dense.BytePairFeaturizer
+  - name: components.nlu_dense.BytePairFeaturizer
     lang: en 
     dim: 25
     vs: 1000
-  - name: nlu_sparse.TfIdfFeaturizer
+  - name: components.nlu_sparse.TfIdfFeaturizer
     analyzer: char
     min_ngram: 2
     max_ngram: 3
-  - name: nlu_clf.LogisticRegressionClassifier
+  - name: components.nlu_clf.LogisticRegressionClassifier
+    max_iter: 2000
 
 policies:
   - name: MemoizationPolicy
