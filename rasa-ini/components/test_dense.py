@@ -23,7 +23,7 @@ bpemb_feat = BytePairFeaturizer(
     name=context.node_name
 )
 
-@pytest.mark.parametrize("text, expected", [("hello world", 1), ("hello world", 2), ("hello there world", 3)])
+@pytest.mark.parametrize("text, expected", [("hello", 1), ("hello world", 2), ("hello there world", 3)])
 def test_dense_feats_added(text, expected):
     # Create a message
     msg = Message({"text": text})
